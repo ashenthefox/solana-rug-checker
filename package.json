@@ -1,0 +1,13 @@
+{
+  "name": "solana-rug-checker",
+  "version": "1.0.0",
+  "description": "Rug pull scanner for Solana and pump.fun tokens: mint and freeze authority, holder concentration, liquidity, Token-2022 traps, with a 0-100 risk score.",
+  "type": "module",
+  "bin": { "rug-check": "bin/rug-check.js" },
+  "scripts": { "start": "node bin/rug-check.js", "test": "node --test" },
+  "engines": { "node": ">=22" },
+  "keywords": ["solana", "rug-checker", "rug-pull", "rugcheck", "pump-fun", "memecoin", "honeypot", "token-scanner", "token-safety", "mint-authority"],
+  "homepage": "https://blixvip.com/rug-pull-scanner",
+  "repository": { "type": "git", "url": "git+https://github.com/blixtrade/solana-rug-checker.git" },
+  "license": "MIT"
+}
