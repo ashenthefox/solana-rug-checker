@@ -106,3 +106,20 @@ test("RugCheck's creator rug history is reported, and its holder concentration r
   assert.doesNotMatch(titles(r), /High holder concentration/);
   assert.equal(r.score, 15);
 });
+
+test("creator share comes from the holder list when RugCheck's creatorBalance is 0", () => {
+  const d = safe(); // supply 1,000,000 raw units
+  d.report.creatorBalance = 0;
+  d.report.topHolders = [...holders([2, 2]), { owner: "C", address: "CA", amount: 32500, pct: 3.25, insider: false }];
+  assert.match(titles(assess(d)), /Creator holds 3\.25%/);
+
+  d.report.topHolders[2].amount = 80000;
+  d.report.topHolders[2].pct = 8;
+  const r = assess(d);
+  assert.match(titles(r), /Creator holds 8\.0%/);
+  assert.ok(r.findings.some((f) => f.title.startsWith("Creator holds") && f.level === "warn" && f.points === 8));
+
+  d.report.topHolders = holders([2, 2]);
+  assert.match(titles(assess(d)), /Creator is not a top holder/);
+  assert.doesNotMatch(titles(assess(d)), /Creator holds 0%/);
+});
