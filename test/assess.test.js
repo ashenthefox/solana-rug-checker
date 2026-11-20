@@ -94,3 +94,15 @@ test("a coin on the pump.fun bonding curve is not treated as zero liquidity", ()
   assert.equal(r.score, 13);
   assert.match(titles(r), /bonding curve/);
 });
+
+test("RugCheck's creator rug history is reported, and its holder concentration risk is not counted twice", () => {
+  const d = safe();
+  d.report.risks = [
+    { name: "Creator history of rugged tokens", value: "", description: "Creator has a history of rugging tokens.", level: "danger" },
+    { name: "High holder concentration", value: "", description: "The top 10 users hold more than 50% token supply", level: "warn" },
+  ];
+  const r = assess(d);
+  assert.match(titles(r), /Creator history of rugged tokens/);
+  assert.doesNotMatch(titles(r), /High holder concentration/);
+  assert.equal(r.score, 15);
+});
