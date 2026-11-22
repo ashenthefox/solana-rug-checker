@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { c, footer, isAddress, main, parseArgs, price, usd, age } from "../lib/core.js";
 import { assess, gather } from "../lib/assess.js";
+import { marketLine } from "../lib/format.js";
 
 const HELP = `solana-rug-checker: rug pull scanner for Solana and pump.fun tokens
 
@@ -36,7 +37,7 @@ main(async () => {
     console.log(`\n${c.bold(`${name} (${symbol})`)}  ${c.dim(mint)}`);
     if (data.pair) {
       const p = data.pair;
-      console.log(c.dim(`${price(p.priceUsd)}  ·  mcap ${usd(p.marketCap ?? p.fdv)}  ·  liquidity ${p.liquidity?.usd == null ? "bonding curve" : usd(p.liquidity.usd)}  ·  24h volume ${usd(p.volume?.h24)}  ·  age ${p.pairCreatedAt ? age(Date.now() - p.pairCreatedAt) : "-"}  ·  ${data.report?.totalHolders != null ? Number(data.report.totalHolders).toLocaleString() + " holders" : ""}`));
+      console.log(c.dim(marketLine([price(p.priceUsd), `mcap ${usd(p.marketCap ?? p.fdv)}`, `liquidity ${p.liquidity?.usd == null ? "bonding curve" : usd(p.liquidity.usd)}`, `24h volume ${usd(p.volume?.h24)}`, `age ${p.pairCreatedAt ? age(Date.now() - p.pairCreatedAt) : "-"}`, data.report?.totalHolders != null ? `${Number(data.report.totalHolders).toLocaleString()} holders` : ""])));
     }
     console.log(`\nRisk score ${colour(c.bold(`${result.score}/100`))}  ${colour(result.verdict)}\n`);
     for (const f of result.findings) console.log(`  ${ICON[f.level]} ${f.level === "ok" ? f.title : c.bold(f.title)}\n    ${c.dim(f.detail)}`);
