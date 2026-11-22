@@ -5,7 +5,7 @@ const base = ["$0.01", "mcap $1.00M", "liquidity bonding curve", "24h volume $10
 test("missing holder count has no dangling separator", () => {
   const line = marketLine([...base, ""]);
   assert.equal(line, base.join("  ·  "));
-  assert.doesNotMatch(line, /[·\\s]$/);
+  assert.doesNotMatch(line, /[·\s]$/);
 });
 test("known holder count is appended", () => assert.equal(marketLine([...base, "1,234 holders"]), base.join("  ·  ") + "  ·  1,234 holders"));
 test("zero holders is not omitted", () => assert.equal(marketLine([...base, "0 holders"]), base.join("  ·  ") + "  ·  0 holders"));
