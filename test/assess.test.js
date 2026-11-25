@@ -123,3 +123,29 @@ test("creator share comes from the holder list when RugCheck's creatorBalance is
   assert.match(titles(assess(d)), /Creator is not a top holder/);
   assert.doesNotMatch(titles(assess(d)), /Creator holds 0%/);
 });
+
+test("pools and closed accounts are excluded from insider findings", () => {
+  const d = safe();
+  d.report.topHolders = [
+    { owner: "POOL", address: "PA", pct: 80, insider: true },
+    { owner: "11111111111111111111111111111111", address: "closed", pct: 10, insider: true },
+    ...holders([2]),
+  ];
+  d.report.knownAccounts = { POOL: { type: "AMM" } };
+  const r = assess(d);
+  assert.doesNotMatch(titles(r), /flagged as insiders/);
+  assert.equal(r.score, 0);
+});
+
+test("only real insider wallets contribute insider risk points", () => {
+  const d = safe();
+  d.report.topHolders = [
+    { owner: "POOL", address: "PA", pct: 80, insider: true },
+    { owner: "11111111111111111111111111111111", address: "closed", pct: 10, insider: true },
+    ...holders([2], { insider: true }),
+  ];
+  d.report.knownAccounts = { PA: { type: "AMM" } };
+  const r = assess(d);
+  assert.deepEqual(r.findings.filter((f) => f.title.includes("flagged as insiders")).map((f) => [f.title, f.points]), [["1 top holders flagged as insiders", 3]]);
+  assert.equal(r.score, 3);
+});
